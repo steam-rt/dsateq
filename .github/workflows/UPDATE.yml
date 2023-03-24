@@ -41,6 +41,7 @@ concurrency:
 jobs:
   update:
     runs-on: windows-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
         with:
