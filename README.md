@@ -124,7 +124,7 @@
         * `PR`: 自动`pr`清单到指定仓库
             * 由于`Github`
               禁止`Actions`[递归创建pr](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow)
-              ,所以需要创建一个[个人访问令牌](https://github.com/settings/tokens/new)保存到仓库密钥`GITHUB_TOKEN`
+              ,所以需要创建一个[个人访问令牌](https://github.com/settings/tokens/new)保存到仓库密钥`token`
             * `repo`: 仓库地址
         * `MERGE`: 自动检查`pr`并合并清单
         * `UPDATE`: 加了`-u`参数

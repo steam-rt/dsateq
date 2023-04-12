@@ -326,7 +326,7 @@ class ManifestAutoUpdate:
         if result != EResult.OK:
             if result != EResult.Fail:
                 self.log.warning(f'User {username}: Relogin failure reason: {result.__repr__()}')
-            if result == EResult.RateLimitExceeded:
+            if result in (EResult.RateLimitExceeded, EResult.AccountLoginDeniedThrottle):
                 with lock:
                     time.sleep(wait)
             result = steam.login(username, password, steam.login_key, two_factor_code=generate_twofactor_code(
@@ -338,7 +338,7 @@ class ManifestAutoUpdate:
                     self.log.warning(f'Using the command line to interactively log in to account {username}!')
                     result = steam.cli_login(username, password)
                 break
-            elif result == EResult.RateLimitExceeded:
+            elif result in (EResult.RateLimitExceeded, EResult.AccountLoginDeniedThrottle):
                 if not count:
                     break
                 with lock:
