@@ -5,6 +5,7 @@ import json
 import time
 import base64
 import gevent
+import random
 import logging
 import argparse
 import platform
@@ -318,6 +319,9 @@ class ManifestAutoUpdate:
                 return
 
     def login(self, steam, username, password):
+        with lock:
+            if globals().get('FailedCount', 0) > 10:
+                return EResult.Fail
         self.log.info(f'Logging in to account {username}!')
         shared_secret = self.two_factor.get(username)
         steam.username = username
@@ -350,6 +354,13 @@ class ManifestAutoUpdate:
                 logging.warning(f'User {username} has been disabled!')
                 self.user_info[username]['enable'] = False
                 self.user_info[username]['status'] = result
+                break
+            elif result == EResult.Fail:
+                with lock:
+                    if 'FailedCount' in globals():
+                        globals()['FailedCount'] += 1
+                    else:
+                        globals()['FailedCount'] = 1
                 break
             wait += 1
             count -= 1
@@ -490,6 +501,11 @@ class ManifestAutoUpdate:
         with Pool(self.pool_num) as pool:
             pool: ThreadPool
             result_list = []
+
+            keys = list(self.account_info.keys())
+            random.shuffle(keys)
+            self.account_info = {key: self.account_info[key] for key in keys}
+
             for username in self.account_info:
                 if self.update_user_list and username not in self.update_user_list:
                     self.log.debug(f'User {username} has skipped the update!')
